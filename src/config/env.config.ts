@@ -13,8 +13,11 @@ class Config {
 	public SECRET: string | undefined;
 	// public CLIENT_URL: string | undefined;
 	public REDIS_HOST: string | undefined;
+	public REDIS_PORT: string | undefined;
+	public REDIS_PASSWORD: string | undefined;
+	public REDIS_USERNAME:string | undefined
 	public ADMIN_EMAIL: string | undefined;
-	public DB_NAME:string | undefined
+	public DB_NAME: string | undefined;
 
 	private readonly DEFAULT_DATABASE_URI = "mongodb://127.0.0.1:27017";
 
@@ -25,7 +28,10 @@ class Config {
 		// this.TOKEN_EXPIRES_IN_HOURS = process.env.TOKEN_EXPIRES_IN_HOURS;
 		// this.NODE_ENV = process.env.NODE_ENV;
 		// this.CLIENT_URL = process.env.CLIENT_URL;
-		this.REDIS_HOST = process.env.REDIS_HOST || "redis://localhost:6379";
+		this.REDIS_HOST = process.env.REDIS_HOST || "127.0.0.1";
+		this.REDIS_PASSWORD = process.env.REDIS_PASSWORD || "123";
+		this.REDIS_PORT = process.env.REDIS_PORT || "6379";
+		this.REDIS_USERNAME= process.env.REDIS_USERNAME || "default";
 		this.ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 		this.SECRET = process.env.SECRET;
 		this.DB_NAME = process.env.DB_NAME || "test-api-ts";

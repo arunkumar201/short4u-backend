@@ -9,13 +9,15 @@ import cors from "cors";
 import { limiter } from "./middleware/limiter/rateLimiter.middleware";
 import passport from "passport";
 import passportAuth from "../src/config/passport.config";
+import { redisInstance } from "./cache/redis";
 import userRoutes from "./routes/crud.route";
 
+const redis = redisInstance.getClient();
+(async () => await redis.set("hello", "hello"))();
 const app = express();
 app.use(limiter);
 app.use(passport.initialize());
 passportAuth.initialize();
-
 
 //Database Instance
 const db = new Database(config.DATABASE_URI!, {
