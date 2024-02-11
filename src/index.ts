@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import { config } from "../src/config/env.config";
 import cors from "cors";
 import { limiter } from "./middleware/limiter/rateLimiter.middleware";
+import { logger } from "./logger";
 import passport from "passport";
 import passportAuth from "../src/config/passport.config";
 import { redisInstance } from "./cache/redis";
@@ -32,7 +33,8 @@ db.connect().catch((err: unknown) =>
 );
 
 //getting server status
-app.get("/server-status", (req: Request, res: Response) => {
+app.get("/server-status",(req: Request,res: Response) => {
+	logger.info("Server is up running!");
 	res.status(200).json({
 		message: "Server is up running! ",
 	});
