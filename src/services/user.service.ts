@@ -1,4 +1,4 @@
-import { IUser } from "types/user.types";
+import { IUser } from "types/model.types";
 import User from "../models/user.model";
 
 export const getUserDetails = async (email: string) => {

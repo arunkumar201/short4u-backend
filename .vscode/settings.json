@@ -1,4 +1,12 @@
 {
 	"editor.suggest.snippetsPreventQuickSuggestions": false,
-	"aiXcoder.showTrayIcon": true
+	"aiXcoder.showTrayIcon": true,
+	"cSpell.words": ["maxlength"]
+	"editor.formatOnSave": true,
+    "editor.codeActionsOnSave": [
+    "source.fixAll.format",
+    "source.fixAll.eslint"
+   ],
+  "eslint.packageManager": "yarn"
+
 }

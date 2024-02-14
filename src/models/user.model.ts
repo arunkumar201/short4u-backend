@@ -1,14 +1,17 @@
 import { Document, Schema, model } from "mongoose";
 
-import { IUser } from "types/user.types";
+import { IUser } from "types/model.types";
 
 export interface IUserDocument extends Document, IUser {}
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<IUserDocument>(
 	{
 		fullName: {
 			type: String,
 			required: true,
+			trim: true,
+			minlength: 3,
+			maxlength: 20,
 		},
 		email: {
 			type: String,

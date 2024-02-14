@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-interface User {
+export interface User {
 	name: string;
 	age: number;
 	email: string;

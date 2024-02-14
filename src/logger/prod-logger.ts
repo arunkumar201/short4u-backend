@@ -1,4 +1,4 @@
-const { format, createLogger, transports } = require("winston");
+import { createLogger, format, transports } from "winston";
 const { timestamp, combine, errors, json } = format;
 
 export function buildProdLogger() {
