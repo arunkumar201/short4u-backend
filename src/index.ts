@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
+import { ErrorHandler } from "./middleware/errors/defaultError.middleware";
 import { PORT } from "./constants/index";
 import bodyParser from "body-parser";
 import { config } from "../src/config/env.config";
@@ -51,6 +52,11 @@ app.use(
 
 //Routes
 app.use(userRoutes);
+
+
+//error handling middleware function as the last middleware function
+app.use(ErrorHandler);
+
 
 app.listen(PORT, () => {
 	console.log(`express server is running on port ${PORT}`);

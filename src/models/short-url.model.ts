@@ -29,6 +29,7 @@ const ShortUrlSchema: Schema = new Schema<IShortUrl>({
   is_public: {
     type: Boolean,
     default: false,
+    required: true,
   },
   short_url: {
     type: String,
@@ -42,6 +43,7 @@ const ShortUrlSchema: Schema = new Schema<IShortUrl>({
   customize_short_url: {
     type: String,
     unique: true,
+    required: true,
   },
   updated_at: {
     type: Date,
