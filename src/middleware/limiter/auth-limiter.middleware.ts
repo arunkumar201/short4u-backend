@@ -1,5 +1,4 @@
 import { RedisStore } from "rate-limit-redis";
-import { connect } from "http2";
 import { rateLimit } from "express-rate-limit";
 import { redisInstance } from "../../cache/redis";
 

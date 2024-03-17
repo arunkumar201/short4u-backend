@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Redis, { RedisOptions } from "ioredis";
 
 import { config } from "../config/env.config";

@@ -7,25 +7,23 @@ import {
 } from "../controllers/user.controller";
 import express, { Request, Response } from "express";
 
-import { DecodeToken } from "../utils/decodeToken";
-import { authLimiter } from "../middleware/limiter/auth-limiter.middleware";
-import { passportAuth } from "../utils/passport-strategy";
+import { authLimiter } from '../middleware/limiter/auth-limiter.middleware';
 
-const userRoutes = express.Router();
+const userCrudRoutes = express.Router();
 
 //GET APIS COLLECTIONS
-userRoutes.get("/", (req: Request, res: Response) => {
-	res.send({ message: "Welcome to the Rest Api with ts" });
+userCrudRoutes.get('/', (req: Request, res: Response) => {
+  res.send({ message: 'Welcome to the Short4u Url shortener service v1' });
 });
 
-userRoutes.get("/users", authLimiter, DecodeToken, passportAuth, get);
-userRoutes.get("/users/:email", getUser);
+userCrudRoutes.get('/users', authLimiter, get);
+userCrudRoutes.get('/users/:email', getUser);
 
 //post
-userRoutes.post("/create-user", authLimiter, create);
+userCrudRoutes.post('/create-user', authLimiter, create);
 //delete
-userRoutes.delete("/delete-user", authLimiter, remove);
+userCrudRoutes.delete('/delete-user', authLimiter, remove);
 //put
-userRoutes.put("/update-user", authLimiter, update);
+userCrudRoutes.put('/update-user', authLimiter, update);
 
-export default userRoutes;
+export default userCrudRoutes;

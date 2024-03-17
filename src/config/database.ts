@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-useless-catch */
 import mongoose, { ConnectOptions, Mongoose } from "mongoose";
 
 import dotenv from "dotenv";

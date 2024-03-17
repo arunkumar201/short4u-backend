@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 import { IShortUrl } from 'types';
 
+// eslint-disable-next-line no-undef
 export interface IShortUrlDocument extends Document, IShortUrl {}
 
 const ShortUrlSchema: Schema = new Schema<IShortUrl>({
@@ -14,7 +15,8 @@ const ShortUrlSchema: Schema = new Schema<IShortUrl>({
       validator: function (value: string) {
         return value.length > 20 || value.length < 10;
       },
-      message: (props) => `${props.value} is not a valid url length between 10 and 20 characters   `,
+      message: props =>
+        `${props.value} is not a valid url length between 10 and 20 characters   `,
     },
   },
   expiration_date: {
@@ -43,7 +45,7 @@ const ShortUrlSchema: Schema = new Schema<IShortUrl>({
   customize_short_url: {
     type: String,
     unique: true,
-    required: true,
+    required: false,
   },
   updated_at: {
     type: Date,

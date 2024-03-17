@@ -7,6 +7,7 @@
     "source.fixAll.format",
     "source.fixAll.eslint"
    ],
-  "eslint.packageManager": "yarn"
+  "eslint.packageManager": "pnpm",
+  "editor.formatOnSave": true
 
 }

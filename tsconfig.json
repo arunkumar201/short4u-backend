@@ -14,7 +14,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"allowSyntheticDefaultImports": true,
 		"paths": {
-			"@": ["src/*"]
+			"@": ["./src/*"]
 		},
 		"sourceMap": true,
 		"types": ["node"]

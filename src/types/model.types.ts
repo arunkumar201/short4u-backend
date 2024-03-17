@@ -2,8 +2,10 @@ import UserModel from "models/user.model";
 import mongoose from "mongoose";
 
 export interface IUser {
-	fullName: string;
+	name: string;
+	password: string;
 	email: string;
+	last_login: string;
 }
 
 export interface IShortUrl {

@@ -34,7 +34,7 @@ class Config {
 		this.REDIS_USERNAME= process.env.REDIS_USERNAME || "default";
 		this.ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 		this.SECRET = process.env.SECRET;
-		this.DB_NAME = process.env.DB_NAME || "test-api-ts";
+		this.DB_NAME = process.env.DB_NAME || "test-short_url";
 	}
 
 	public validateConfig(): void {

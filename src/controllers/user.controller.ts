@@ -1,17 +1,23 @@
-import { NextFunction, Request, Response } from "express";
+/* eslint-disable no-undef */
+import { NextFunction, Request, Response } from 'express';
 import {
-	createUser,
-	deleteUser,
-	getAllUsers,
-	getUserDetails,
-	updateUser,
-} from "../services/user.service";
+  createUser,
+  deleteUser,
+  getAllUsers,
+  getUserDetails,
+  updateUser,
+} from '../services/user.service';
 
-import { IUser } from "types/model.types";
-import expressAsyncHandler from "express-async-handler";
+import { IUser } from 'types/model.types';
+import { StatusCodes } from 'http-status-codes';
+import User from '../models/user.model';
+import bcrypt from 'bcryptjs';
+import expressAsyncHandler from 'express-async-handler';
+import { getHashPassword } from '../utils/password';
+import { logger } from '../logger';
 
 //get methods
-export const get = expressAsyncHandler(async (_, res: Response, next: NextFunction) => {
+export const get = expressAsyncHandler(async (_, res: Response) => {
   try {
     const users = await getAllUsers();
     if (users) {
@@ -19,99 +25,121 @@ export const get = expressAsyncHandler(async (_, res: Response, next: NextFuncti
     }
   } catch (err: unknown) {
     console.log('Error is Occurred in getUsers', err);
-    next(err);
+    res.status(StatusCodes.EXPECTATION_FAILED).json({ message: err });
   }
 });
 
-
 export const getUser = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-	try {
-		console.debug("🚀 ~ file: user.controller.ts:28 ~ getUser ~ email:");
-		const { email } = req.params;
-		const users = await getUserDetails(email);
-		if (users) {
-			res.status(201).json({ users: users });
-		} else {
-			return res.status(404).json({ message: "user not found" });
-		}
-	} catch (err: unknown) {
-		console.log("Error is Occurred in getUsers", err);
-		next(err);
-	}
+  try {
+    console.debug('🚀 ~ file: user.controller.ts:28 ~ getUser ~ email:');
+    const { email } = req.params;
+    const users = await getUserDetails(email);
+    if (users) {
+      res.status(201).json({ users: users });
+    } else {
+      return res.status(404).json({ message: 'user not found' });
+    }
+  } catch (err: unknown) {
+    console.log('Error is Occurred in getUsers', err);
+    next(err);
+  }
 };
 
 //Post Methods
-export const create = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	try {
-		const { fullName, email } = req.body;
-		const userData: IUser = {
-			fullName,
-			email: email.toLowerCase(),
-		};
-		const result = await createUser(userData);
+export const create = expressAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, email, last_login, password } = req.body;
+      const hashPassword = await getHashPassword(password);
+      if (!hashPassword) throw new Error('Error while hashing password');
+      const userData: IUser = {
+        name,
+        email: email.toLowerCase(),
+        password: hashPassword,
+        last_login,
+      };
+      const result = await createUser(userData);
+      if (!result) {
+        res.status(StatusCodes.ACCEPTED).json({ message: result });
+      }
+      res.status(201).json({ data: result });
+    } catch (error) {
+      console.log(`error while creating user: ${error}`);
+      next(error);
+    }
+  },
+);
 
-		res.json({ data: result }).status(201);
-	} catch (error) {
-		console.log(`error while creating user: ${error}`);
-		next(error);
-	}
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    //check the user exist or not
+    const user = await User.findOne({ email: email });
+    if (user) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (isMatch) {
+        return res.status(200).json({
+          message: 'Login successfully',
+        });
+      } else {
+        res.status(200).json({ message: 'password is incorrect' });
+      }
+    } else {
+      res.status(200).json({
+        message: 'User not found. Please register',
+      });
+    }
+  } catch (error) {
+    logger.error(`Error while logging in user: ${error}`);
+    res.status(StatusCodes.EXPECTATION_FAILED).json(error);
+  }
 };
 
 //PUT method
-export const update = async (
-	req: Request,
-	res: Response,
-) => {
-	try {
-		const { email, fullName } = req.body;
+export const update = async (req: Request, res: Response) => {
+  try {
+    const { email, name } = req.body;
 
-		const data = {
-			email,
-			fullName,
-		};
+    const data = {
+      email,
+      name,
+    };
 
-		const result = await updateUser(data);
+    const result = await updateUser(data);
 
-		if (result) {
-			return res
-				.status(200)
-				.json({ message: "User updated successfully", user: result });
-		} else {
-			return res.status(404).json({ message: "User not found" });
-		}
-	} catch (error) {
-		console.error(`Error while updating user: ${error}`);
-		return res.status(500).json({ message: "Internal server error" });
-	}
+    if (result) {
+      return res
+        .status(200)
+        .json({ message: 'User updated successfully', user: result });
+    } else {
+      return res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(`Error while updating user: ${error}`);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 // DELETE method
-export const remove = async (
-	req: Request,
-	res: Response,
-) => {
-	try {
-		const { email } = req.body;
+export const remove = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
 
-		const deletedUser = await deleteUser(email);
+    const deletedUser = await deleteUser(email);
 
-		if (deletedUser) {
-			return res
-				.status(200)
-				.json({ message: "User deleted successfully", user: deletedUser });
-		} else {
-			return res.status(404).json({ message: "User not found" });
-		}
-	} catch (error) {
-		console.error(`Error while deleting user: ${error}`);
-		return res.status(500).json({ message: "Internal server error" });
-	}
+    if (deletedUser) {
+      return res
+        .status(200)
+        .json({ message: 'User deleted successfully', user: deletedUser });
+    } else {
+      return res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(`Error while deleting user: ${error}`);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };

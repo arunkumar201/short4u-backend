@@ -8,6 +8,7 @@ export const ErrorHandler = (err: any, req: Request, res: Response):void => {
     success: false,
     status: errStatus,
     message: errMsg,
+    // eslint-disable-next-line no-undef
     stack: process.env.NODE_ENV === 'development' ? err.stack : {},
   });
 };

@@ -12,7 +12,7 @@ import { logger } from "./logger";
 import passport from "passport";
 import passportAuth from "../src/config/passport.config";
 import { redisInstance } from "./cache/redis";
-import userRoutes from "./routes/crud.route";
+import userRoutes from "./routes/v1/user.route"
 
 const redis = redisInstance.getClient();
 (async () => await redis.set("hello", "hello"))();
@@ -30,7 +30,8 @@ const db = new Database(config.DATABASE_URI!, {
 
 //Connect with DATABASE
 db.connect().catch((err: unknown) =>
-	console.error("Error connecting to database:", err)
+  // eslint-disable-next-line no-undef
+  console.error('Error connecting to database:', err),
 );
 
 //getting server status
@@ -51,13 +52,13 @@ app.use(
 );
 
 //Routes
-app.use(userRoutes);
+app.use('/v1/user',userRoutes);
 
 
 //error handling middleware function as the last middleware function
 app.use(ErrorHandler);
 
-
 app.listen(PORT, () => {
-	console.log(`express server is running on port ${PORT}`);
+  // eslint-disable-next-line no-undef
+  console.log(`express server is running on port ${PORT}`);
 });

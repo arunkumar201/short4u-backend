@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { NextFunction, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
