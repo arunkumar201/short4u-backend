@@ -5,7 +5,7 @@ import { logger } from '../logger';
 
 export const validate =
   (schema: AnyZodObject) =>
-    async (req: Request,res: Response,next: NextFunction) => {    
+    async (req: Request,res: Response,next: NextFunction) => { 
     try {
       await schema.parseAsync({
         body: req.body,

@@ -7,8 +7,13 @@ import {
   update,
 } from '../../controllers/user.controller';
 import express, { Request, Response } from 'express';
-import { loginSchema, userSchema } from '../../validations/auth';
+import {
+  loginSchema,
+  userEmailSchema,
+  userSchema,
+} from '../../validations/auth';
 
+import { DecodeToken } from '../../utils/decodeToken';
 import { authLimiter } from '../../middleware/limiter/auth-limiter.middleware';
 import { validate } from '../../utils/user';
 
@@ -20,11 +25,17 @@ userRoutes.get('/', (req: Request, res: Response) => {
 });
 
 userRoutes.get('/users', authLimiter, get);
-userRoutes.get('/users/:email', getUser);
+userRoutes.get(
+  '/:email',
+  validate(userEmailSchema),
+  authLimiter,
+  DecodeToken,
+  getUser,
+);
 
 //post
 userRoutes.post('/login', validate(loginSchema), authLimiter, login);
-userRoutes.post('/new-user',validate(userSchema),authLimiter,create);
+userRoutes.post('/new-user', validate(userSchema), authLimiter, create);
 
 //delete
 userRoutes.delete('/delete-user', authLimiter, remove);

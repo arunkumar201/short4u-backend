@@ -37,3 +37,11 @@ export const loginSchema = z.object({
       .regex(passwordRegex),
   }),
 });
+
+export const userEmailSchema= z.object({
+  params: z.object({
+    email: z.string().email({
+      message: 'email must be a valid email',
+    }),
+  }),
+});

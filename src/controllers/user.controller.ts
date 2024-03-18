@@ -8,11 +8,13 @@ import {
   updateUser,
 } from '../services/user.service';
 
-import { IUser } from 'types/model.types';
+import { ERROR_MESSAGES } from '../utils/messages';
+import { IUser } from '../types/model.types';
 import { StatusCodes } from 'http-status-codes';
 import User from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import expressAsyncHandler from 'express-async-handler';
+import { generateJWT } from '../utils/generateJwt';
 import { getHashPassword } from '../utils/password';
 import { logger } from '../logger';
 
@@ -35,13 +37,12 @@ export const getUser = async (
   next: NextFunction,
 ) => {
   try {
-    console.debug('🚀 ~ file: user.controller.ts:28 ~ getUser ~ email:');
     const { email } = req.params;
     const users = await getUserDetails(email);
     if (users) {
       res.status(201).json({ users: users });
     } else {
-      return res.status(404).json({ message: 'user not found' });
+       res.status(404).json({ message: 'user not found' });
     }
   } catch (err: unknown) {
     console.log('Error is Occurred in getUsers', err);
@@ -82,9 +83,25 @@ export const login = async (req: Request, res: Response) => {
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        return res.status(200).json({
-          message: 'Login successfully',
-        });
+        //here we need to return jwt token  in the response
+        const signUser = {
+          email: user.email,
+          _id: user._id,
+          last_login: user.last_login,
+        };
+        try {
+          const token = await generateJWT(signUser);
+          return res.status(200).json({
+            user:signUser,
+            message: 'Login successfully',
+            token,
+          });
+        } catch (error) {
+          logger.info(`Error while generating JWT: ${error}`);
+          res
+            .status(StatusCodes.UNPROCESSABLE_ENTITY)
+            .json(ERROR_MESSAGES.OPERATION_FAILED);
+        }
       } else {
         res.status(200).json({ message: 'password is incorrect' });
       }

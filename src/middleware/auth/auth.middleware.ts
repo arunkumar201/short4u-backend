@@ -9,7 +9,7 @@ export const requireUserAuth = async (
 	res: Response,
 	next: NextFunction
 ) => {
-	console.log("User Auth middleware runs");
+	// console.log("User Auth middleware runs");
 	req.userId = 1;
 	next();
 };
