@@ -38,8 +38,14 @@ userRoutes.post('/login', validate(loginSchema), authLimiter, login);
 userRoutes.post('/new-user', validate(userSchema), authLimiter, create);
 
 //delete
-userRoutes.delete('/delete-user', authLimiter, remove);
+userRoutes.delete(
+  '/delete-user',
+  validate(userSchema),
+  authLimiter,
+  DecodeToken,
+  remove,
+);
 //put
-userRoutes.put('/update-user', authLimiter, update);
+userRoutes.put('/update-user', authLimiter, DecodeToken, update);
 
 export default userRoutes;
