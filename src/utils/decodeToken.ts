@@ -1,35 +1,47 @@
 /* eslint-disable no-undef */
-import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import { ERROR_MESSAGES } from './messages';
+import { IAuthRequest } from '../middleware/auth/admin.middleware';
+import { ROLE } from '../types';
+import { config } from '../config/env.config';
 
-export const DecodeToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type T = any;
+export const DecodeToken = async (req: IAuthRequest) => {
   const authHeader = req.headers?.authorization;
   const token = authHeader?.split(' ')[1];
-  console.log(token, '-------------------------- -----------');
   if (!token) {
-    return res.status(400).json({ message: ERROR_MESSAGES.MISSING_TOKEN });
+    return null;
   }
-
+  const tokenInfo = jwt.decode(token);
+  let secret = '';
+  if (!tokenInfo) {
+    throw new Error('Error while decoding token');
+  }
+  if (req.role === ROLE.ADMIN) {
+    if (
+      typeof tokenInfo === 'object' &&
+      'email' in tokenInfo &&
+      tokenInfo.email === config.ADMIN_EMAIL
+    ) {
+      secret = config.ADMIN_SECRET;
+    }
+  } else {
+    if (req.params.email !== (tokenInfo as T).email) {
+      throw new Error(ERROR_MESSAGES.PERMISSION_DENIED);
+    }
+    secret = config.SECRET;
+  }
   try {
-    const decode: JwtPayload = jwt.verify(
-      token,
-      process.env.SECRET ?? '123',
-    ) as JwtPayload;
+    const decode: JwtPayload = jwt.verify(token, secret) as JwtPayload;
 
-    console.log(decode);
     if (!decode || !decode._id) {
       throw new Error('Invalid token structure');
     }
-    // req.userId = decode.id;
-    next();
+    return decode._id;
   } catch (error) {
     console.error('Error decoding token:', error);
-    res.status(401).json({ message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS });
+    throw new Error(`Error while decoding token: ${error}`);
   }
 };

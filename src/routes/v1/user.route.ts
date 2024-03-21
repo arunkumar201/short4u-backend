@@ -13,9 +13,12 @@ import {
   userSchema,
 } from '../../validations/auth';
 
-import { DecodeToken } from '../../utils/decodeToken';
 import { authLimiter } from '../../middleware/limiter/auth-limiter.middleware';
+import { requireAdminAuth } from '../../middleware/auth/admin.middleware';
+import { requireUserAuth } from '../../middleware/auth/auth.middleware';
 import { validate } from '../../utils/user';
+
+type T = never;
 
 const userRoutes = express.Router();
 
@@ -26,26 +29,27 @@ userRoutes.get('/', (req: Request, res: Response) => {
 
 userRoutes.get('/users', authLimiter, get);
 userRoutes.get(
-  '/:email',
+  'admin/:email',
   validate(userEmailSchema),
   authLimiter,
-  DecodeToken,
+  requireAdminAuth as T,
   getUser,
 );
 
+userRoutes.get(
+  '/:email',
+  validate(userEmailSchema),
+  authLimiter,
+  requireUserAuth as T,
+  getUser,
+);
 //post
 userRoutes.post('/login', validate(loginSchema), authLimiter, login);
 userRoutes.post('/new-user', validate(userSchema), authLimiter, create);
 
 //delete
-userRoutes.delete(
-  '/delete-user',
-  validate(userSchema),
-  authLimiter,
-  DecodeToken,
-  remove,
-);
+userRoutes.delete('/delete-user', validate(userSchema), authLimiter, remove);
 //put
-userRoutes.put('/update-user', authLimiter, DecodeToken, update);
+userRoutes.put('/update-user', authLimiter, update);
 
 export default userRoutes;

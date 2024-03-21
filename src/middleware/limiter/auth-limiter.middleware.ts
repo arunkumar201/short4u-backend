@@ -7,7 +7,7 @@ const client = redisInstance.getClient();
 const ONE_MINUTE = 60 * 1000;
 export const authLimiter = rateLimit({
 	windowMs: 5 * ONE_MINUTE, // 5 minutes
-	max: 20,
+	max: 50,
 	standardHeaders: "draft-7",
 	message: "Too many requests, please try again later",
 	legacyHeaders: false,

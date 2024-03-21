@@ -1,21 +1,25 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { DecodeToken } from '../../utils/decodeToken';
 import { ERROR_MESSAGES } from '../../utils/messages';
-import { IAuthRequest } from './admin.middleware';
 import { ROLE } from '../../types';
 import { logger } from '../../logger';
 
-export const requireUserAuth = async (
+export interface IAuthRequest extends Request {
+  role: ROLE;
+  userId?: string;
+}
+
+export const requireAdminAuth = async (
   req: IAuthRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    req.role = ROLE.USER;
-    const token = await DecodeToken(req);
+	try {
+	req.role = ROLE.ADMIN;
+	const token = await DecodeToken(req);
     if (!token) {
-      return res.status(202).json({ message: ERROR_MESSAGES.MISSING_TOKEN });
+      return res.status(400).json({ message: ERROR_MESSAGES.MISSING_TOKEN });
     }
     next();
   } catch (error) {

@@ -1,4 +1,4 @@
-import { IUser } from 'types';
+import { IUser } from '../types';
 import { JWT_EXPIRING } from '../globalConfig';
 import { config } from '../config/env.config';
 import jwt from 'jsonwebtoken';
@@ -10,11 +10,22 @@ import { logger } from '../logger';
  * @param {Partial<IUser>} signUser - The user object to sign in the token
  * @return {Promise<string>} The generated JWT token
  */
-export const generateJWT = async (signUser: Partial<IUser>): Promise<string> => {
+export const generateJWT = async (
+  signUser: Partial<IUser>,
+): Promise<string> => {
   try {
-    const token = jwt.sign(signUser, config.SECRET ?? '111102', {
+    let secret = config.SECRET;
+    let subject = 'USER';
+    if (
+      signUser.email?.toLocaleLowerCase() ===
+      config.ADMIN_EMAIL?.toLocaleLowerCase()
+    ) {
+      secret = config.ADMIN_SECRET;
+      subject = 'ADMIN';
+    }
+    const token = jwt.sign(signUser, secret, {
       expiresIn: JWT_EXPIRING,
-      subject: 'user',
+      subject,
     });
     return token;
   } catch (error) {
