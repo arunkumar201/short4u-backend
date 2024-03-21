@@ -3,11 +3,13 @@ import { ExtractJwt, Strategy, StrategyOptions } from "passport-jwt";
 import { JwtPayload } from "jsonwebtoken";
 import User from "../models/user.model";
 import passport from 'passport'
+import { config } from "./env.config";
 
 const options: StrategyOptions = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-	secretOrKey: process.env.SECRET,
+	secretOrKey:config.SECRET,
 };
+
 
 passport.use(
 	new Strategy(options, (payload: JwtPayload, done) => {
