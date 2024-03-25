@@ -27,7 +27,7 @@ userRoutes.get('/', (req: Request, res: Response) => {
   res.send({ message: 'Welcome to the Short4u Url shortener service' });
 });
 
-userRoutes.get('/users', authLimiter, get);
+userRoutes.get('/users', authLimiter, requireAdminAuth as T, get);
 userRoutes.get(
   'admin/:email',
   validate(userEmailSchema),

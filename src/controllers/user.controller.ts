@@ -23,7 +23,7 @@ export const get = expressAsyncHandler(async (_, res: Response) => {
   try {
     const users = await getAllUsers();
     if (users) {
-      res.status(201).json({ users: users });
+      res.status(201).json({ users });
     }
   } catch (err: unknown) {
     console.log('Error is Occurred in getUsers', err);

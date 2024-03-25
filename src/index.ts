@@ -83,7 +83,7 @@ app.use(
 );
 
 //Routes
-app.use('/v1/user', userRoutes);
+app.use('/v1/users', userRoutes);
 
 //error handling middleware function as the last middleware function
 app.use(ErrorHandler);
