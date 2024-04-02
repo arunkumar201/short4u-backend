@@ -68,6 +68,20 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 //middlewares
+
+// const allowedOrigins = ['example1.com', 'example3.com'];
+// app.use(
+//   cors({
+//     origin: (origin, next) => {
+//       if (allowedOrigins.includes(origin)) {
+//         next(null, true);
+//       } else {
+//         next(new Error(`${origin} not allowed`));
+//       }
+//     },
+//   }),
+// );
+
 app.use(
   cors({
     credentials: true,
