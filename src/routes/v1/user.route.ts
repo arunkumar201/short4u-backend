@@ -1,3 +1,4 @@
+import { ZLoginMiddleware, ZUserEmail, ZUserMiddleware } from 'validations/auth';
 import {
   create,
   get,
@@ -7,11 +8,6 @@ import {
   update,
 } from '../../controllers/user.controller';
 import express, { Request, Response } from 'express';
-import {
-  loginSchema,
-  userEmailSchema,
-  userSchema,
-} from '../../validations/auth';
 
 import { authLimiter } from '../../middleware/limiter/auth-limiter.middleware';
 import { requireAdminAuth } from '../../middleware/auth/admin.middleware';
@@ -30,7 +26,7 @@ userRoutes.get('/', (req: Request, res: Response) => {
 userRoutes.get('/users', authLimiter, requireAdminAuth as T, get);
 userRoutes.get(
   'admin/:email',
-  validate(userEmailSchema),
+  validate(ZUserEmail),
   authLimiter,
   requireAdminAuth as T,
   getUser,
@@ -38,17 +34,17 @@ userRoutes.get(
 
 userRoutes.get(
   '/:email',
-  validate(userEmailSchema),
+  validate(ZUserEmail),
   authLimiter,
   requireUserAuth as T,
   getUser,
 );
 //post
-userRoutes.post('/login', validate(loginSchema), authLimiter, login);
-userRoutes.post('/new-user', validate(userSchema), authLimiter, create);
+userRoutes.post('/login', validate(ZLoginMiddleware), authLimiter, login);
+userRoutes.post('/new-user', validate(ZUserMiddleware), authLimiter, create);
 
 //delete
-userRoutes.delete('/delete-user', validate(userSchema), authLimiter, remove);
+userRoutes.delete('/delete-user', validate(ZUserMiddleware), authLimiter, remove);
 //put
 userRoutes.put('/update-user', authLimiter, update);
 
